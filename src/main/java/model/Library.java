@@ -1,7 +1,11 @@
+package model;
+
+import app.Book;
+
 class Library {
 
     public static void main(String[] args) {
-        final String appName = "Library v0.4";
+        final String appName = "model.Library v0.5";
 
         Book book1 = new Book("W pustyni i w puszczy", "Henryk Sienkiewicz",
                 2010, 296, "Greg", "9788373271890");
