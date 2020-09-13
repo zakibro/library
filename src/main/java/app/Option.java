@@ -1,5 +1,7 @@
 package app;
 
+import exception.NoSuchOptionException;
+
 public enum Option {
 
     EXIT(0, " - exit"),
@@ -29,7 +31,11 @@ public enum Option {
         return this.value + " " + this.description;
     }
 
-    static Option createFromInt(int option) {
-        return Option.values()[option];
+    static Option createFromInt(int option) throws NoSuchOptionException {
+        try {
+            return Option.values()[option];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new NoSuchOptionException("No such option: " + option + ", try again!");
+        }
     }
 }

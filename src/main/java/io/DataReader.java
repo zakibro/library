@@ -8,45 +8,52 @@ import java.util.Scanner;
 public class DataReader {
 
     private Scanner scanner = new Scanner(System.in);
+    private ConsolePrinter printer;
+
+    public DataReader(ConsolePrinter printer) {
+        this.printer = printer;
+    }
 
     public Book readAndCreateBook() {
-        System.out.println("Title:");
+        printer.printLine("Title:");
         String title = scanner.nextLine();
-        System.out.println("Author:");
+        printer.printLine("Author:");
         String author = scanner.nextLine();
-        System.out.println("Publisher:");
+        printer.printLine("Publisher:");
         String publisher = scanner.nextLine();
-        System.out.println("ISBN:");
+        printer.printLine("ISBN:");
         String isbn = scanner.nextLine();
-        System.out.println("Year:");
+        printer.printLine("Year:");
         int releaseDate = getInt();
-        System.out.println("Pages:");
+        printer.printLine("Pages:");
         int pages = getInt();
 
         return new Book(title, author, releaseDate, pages, publisher, isbn);
     }
 
     public Magazine readAndCreateMagazine() {
-        System.out.println("Title:");
+        printer.printLine("Title:");
         String title = scanner.nextLine();
-        System.out.println("Publisher:");
+        printer.printLine("Publisher:");
         String publisher = scanner.nextLine();
-        System.out.println("Language:");
+        printer.printLine("Language:");
         String language = scanner.nextLine();
-        System.out.println("Year:");
+        printer.printLine("Year:");
         int year = getInt();
-        System.out.println("Month");
+        printer.printLine("Month");
         int month = getInt();
-        System.out.println("Day:");
+        printer.printLine("Day:");
         int day = getInt();
 
         return new Magazine(title, publisher, language, year, month, day);
     }
 
-    public int getInt(){
-        int number = scanner.nextInt();
-        scanner.nextLine();
-        return number;
+    public int getInt() {
+        try {
+            return scanner.nextInt();
+        } finally {
+            scanner.nextLine();
+        }
     }
 
     public void close() {

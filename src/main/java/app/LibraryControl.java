@@ -1,22 +1,28 @@
 package app;
 
+import exception.NoSuchOptionException;
+import io.ConsolePrinter;
 import io.DataReader;
 import model.Book;
 import model.Library;
 import model.Magazine;
+import model.Publication;
+
+import java.util.InputMismatchException;
 
 public class LibraryControl {
 
-    private DataReader dataReader = new DataReader();
+    private ConsolePrinter printer = new ConsolePrinter();
+    private DataReader dataReader = new DataReader(printer);
     private Library library = new Library();
 
-    public void controlLoop(){
+    public void controlLoop() {
         Option option;
 
         do {
             printOptions();
-            option = Option.createFromInt(dataReader.getInt());
-            switch (option){
+            option = getOption();
+            switch (option) {
                 case ADD_BOOK:
                     addBook();
                     break;
@@ -33,38 +39,68 @@ public class LibraryControl {
                     exit();
                     break;
                 default:
-                    System.out.println("There is no such option, try again!");
+                    printer.printLine("There is no such option, try again!");
             }
-        }while (option != Option.EXIT);
+        } while (option != Option.EXIT);
     }
 
     private void printMagazines() {
-        library.printMagazines();
+        Publication[] publications = library.getPublications();
+        printer.printMagazines(publications);
     }
 
     private void addMagazine() {
-        Magazine magazine = dataReader.readAndCreateMagazine();
-        library.addMagazine(magazine);
+        try {
+            Magazine magazine = dataReader.readAndCreateMagazine();
+            library.addMagazine(magazine);
+        } catch (InputMismatchException e) {
+            printer.printLine("Couldn't create magazine, wrong data!");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            printer.printLine(e.getMessage());
+        }
     }
 
     private void exit() {
-        System.out.println("Bye! Bye!");
+        printer.printLine("Bye! Bye!");
         dataReader.close();
     }
 
     private void printBooks() {
-        library.printBooks();
+        Publication[] publications = library.getPublications();
+        printer.printBooks(publications);
     }
 
     private void addBook() {
-        Book book = dataReader.readAndCreateBook();
-        library.addBook(book);
+        try {
+            Book book = dataReader.readAndCreateBook();
+            library.addBook(book);
+        } catch (InputMismatchException e) {
+            printer.printLine("Couldn't create book, wrong data!");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            printer.printLine(e.getMessage());
+        }
     }
 
     private void printOptions() {
-        System.out.println("Choose option:");
-        for (Option value : Option.values()) {
-            System.out.println(value);
+        printer.printLine("Choose option:");
+        for (Option option : Option.values()) {
+            printer.printLine(option.toString());
         }
+    }
+
+    private Option getOption() {
+        boolean optionOk = false;
+        Option option = null;
+        while (!optionOk) {
+            try {
+                option = Option.createFromInt(dataReader.getInt());
+                optionOk = true;
+            } catch (NoSuchOptionException e) {
+                printer.printLine(e.getMessage());
+            } catch (InputMismatchException e) {
+                printer.printLine("Entered value is not int, try again!");
+            }
+        }
+        return option;
     }
 }
