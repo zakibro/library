@@ -1,8 +1,13 @@
 package app;
 
+import exception.DataExportException;
+import exception.DataImportException;
+import exception.InvalidDataException;
 import exception.NoSuchOptionException;
 import io.ConsolePrinter;
 import io.DataReader;
+import io.file.FileManager;
+import io.file.FileManagerBuilder;
 import model.Book;
 import model.Library;
 import model.Magazine;
@@ -14,9 +19,24 @@ public class LibraryControl {
 
     private ConsolePrinter printer = new ConsolePrinter();
     private DataReader dataReader = new DataReader(printer);
-    private Library library = new Library();
+    private FileManager fileManager;
 
-    public void controlLoop() {
+    private Library library;
+
+    LibraryControl() {
+        fileManager = new FileManagerBuilder(printer, dataReader).build();
+
+        try {
+            library = fileManager.importData();
+            printer.printLine("Data imported from file");
+        } catch (DataImportException | InvalidDataException e) {
+            printer.printLine(e.getMessage());
+            printer.printLine("New database initialized");
+            library = new Library();
+        }
+    }
+
+    void controlLoop() {
         Option option;
 
         do {
@@ -52,7 +72,7 @@ public class LibraryControl {
     private void addMagazine() {
         try {
             Magazine magazine = dataReader.readAndCreateMagazine();
-            library.addMagazine(magazine);
+            library.addPublication(magazine);
         } catch (InputMismatchException e) {
             printer.printLine("Couldn't create magazine, wrong data!");
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -61,6 +81,13 @@ public class LibraryControl {
     }
 
     private void exit() {
+
+        try {
+            fileManager.exportData(library);
+            printer.printLine("Data export successful");
+        } catch (DataExportException e) {
+            printer.printLine(e.getMessage());
+        }
         printer.printLine("Bye! Bye!");
         dataReader.close();
     }
@@ -73,7 +100,7 @@ public class LibraryControl {
     private void addBook() {
         try {
             Book book = dataReader.readAndCreateBook();
-            library.addBook(book);
+            library.addPublication(book);
         } catch (InputMismatchException e) {
             printer.printLine("Couldn't create book, wrong data!");
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -103,6 +130,7 @@ public class LibraryControl {
         }
         return option;
     }
+
     private enum Option {
 
         EXIT(0, " - exit"),

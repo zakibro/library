@@ -1,8 +1,9 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class Publication {
+public abstract class Publication implements Serializable {
 
     private int year;
     private String title;
@@ -52,6 +53,8 @@ public abstract class Publication {
                 Objects.equals(title, that.title) &&
                 Objects.equals(publisher, that.publisher);
     }
+
+    public abstract String toCSV();
 
     @Override
     public int hashCode() {

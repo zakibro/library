@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class Book extends Publication {
 
+    public static final String TYPE = "Book";
     private String author;
     private int pages;
     private String isbn;
@@ -48,6 +49,16 @@ public class Book extends Publication {
         return pages == book.pages &&
                 Objects.equals(author, book.author) &&
                 Objects.equals(isbn, book.isbn);
+    }
+
+    @Override
+    public String toCSV() {
+        return TYPE + ";" + getTitle() + ";"
+                           + getPublisher() + ";"
+                           + getYear() + ";"
+                           + author + ";"
+                           + pages + ";"
+                           + isbn;
     }
 
     @Override
