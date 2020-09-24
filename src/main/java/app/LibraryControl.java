@@ -58,10 +58,42 @@ public class LibraryControl {
                 case EXIT:
                     exit();
                     break;
+                case DELETE_BOOK:
+                    deleteBook();
+                    break;
+                case DELETE_MAGAZINE:
+                    deleteMagazine();
+                    break;
                 default:
                     printer.printLine("There is no such option, try again!");
             }
         } while (option != Option.EXIT);
+    }
+
+    private void deleteMagazine() {
+        try {
+            Magazine magazine = dataReader.readAndCreateMagazine();
+            if (library.removePublication(magazine)) {
+                printer.printLine("Magazine deleted");
+            } else {
+                printer.printLine("Couldn't find magazine");
+            }
+        } catch (InputMismatchException e){
+            printer.printLine("Couldn't create a magazine, wrong data!");
+        }
+    }
+
+    private void deleteBook() {
+        try {
+            Book book = dataReader.readAndCreateBook();
+            if (library.removePublication(book)) {
+                printer.printLine("Book deleted");
+            } else {
+                printer.printLine("Couldn't find book");
+            }
+        } catch (InputMismatchException e){
+            printer.printLine("Couldn't create a book, wrong data!");
+        }
     }
 
     private void printMagazines() {
@@ -137,7 +169,9 @@ public class LibraryControl {
         ADD_BOOK(1, " - add new book"),
         ADD_MAGAZINE(2, " - add new magazine"),
         PRINT_BOOKS(3, " - print info about all books"),
-        PRINT_MAGAZINES(4, " - print info about all magazines");
+        PRINT_MAGAZINES(4, " - print info about all magazines"),
+        DELETE_BOOK(5, " - delete book"),
+        DELETE_MAGAZINE(6, " - delete magazine");
 
         private final int value;
         private final String description;
